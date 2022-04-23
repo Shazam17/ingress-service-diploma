@@ -22,7 +22,7 @@ export class UserModel extends Model {
 
 @Injectable()
 export class PostgresUsersRepository implements UserRepository {
-  async getUserDetail(id: string): Promise<UserModel> {
+  async getUserById(id: string): Promise<UserModel> {
     return UserModel.findOne({ where: { id: { [Op.eq]: id } } });
   }
 

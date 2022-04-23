@@ -9,6 +9,10 @@ import {
   Usecase as RegisterUsecase,
 } from '../packages/domain/auth/usecases/register';
 import { HandleRequest } from '../packages/shared/handler';
+import {
+  RefreshInput,
+  Usecase as RefreshUsecase,
+} from '../packages/domain/auth/usecases/refresh';
 
 @Controller()
 @UseInterceptors(new HandleRequest())
@@ -24,6 +28,12 @@ export class AuthController {
   @Post('/register')
   public register(@Body() body: RegisterInput) {
     const usecase = new RegisterUsecase(this.usersRepository);
+    return usecase.execute(body);
+  }
+
+  @Post('/refresh')
+  public refreshToken(@Body() body: RefreshInput) {
+    const usecase = new RefreshUsecase(this.usersRepository);
     return usecase.execute(body);
   }
 }

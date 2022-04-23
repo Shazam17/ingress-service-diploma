@@ -17,3 +17,9 @@ export class UserIsAlreadyExists extends HttpException {
     super('User is already exists', 403);
   }
 }
+
+export class InvalidToken extends HttpException {
+  constructor() {
+    super('Invalid token', 501);
+  }
+}

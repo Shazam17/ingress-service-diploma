@@ -2,7 +2,7 @@ import { UserRepository } from '../repositories/UsersRepository';
 import { IsEmail, IsString } from 'class-validator';
 import { PasswordIncorrect, UserNotFound } from '../../../shared/ErrorTypes';
 import * as crypto from 'crypto';
-import { RequestSuccess } from '../../../shared/ResponseTypes';
+import { JWT, JWTResponse } from '../../../shared/jwt';
 
 export class LoginInput {
   @IsEmail()
@@ -18,7 +18,7 @@ export class Usecase {
     this.users = userRepository;
   }
 
-  async execute(input: LoginInput) {
+  async execute(input: LoginInput): Promise<JWTResponse> {
     const user = await this.users.getUserByEmail(input.email);
 
     if (!user) {
@@ -32,6 +32,6 @@ export class Usecase {
     if (!isPasswordCorrect) {
       throw new PasswordIncorrect();
     }
-    return new RequestSuccess({});
+    return JWT.getAuthTokensPair(user.id);
   }
 }

@@ -1,10 +1,12 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import {
   PostgresUsersRepository,
   UserModel,
 } from './packages/repositories/postgress/postgres-users-repository.service';
 import { AuthController } from './services/auth.controller';
+import { PanelController } from './services/panel.controller';
+import { LoggerMiddleware } from './packages/shared/authorizer';
 
 @Module({
   imports: [
@@ -17,7 +19,11 @@ import { AuthController } from './services/auth.controller';
       models: [UserModel],
     }),
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, PanelController],
   providers: [PostgresUsersRepository],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes(PanelController);
+  }
+}
