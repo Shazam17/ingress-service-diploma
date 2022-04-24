@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       password: DataTypes.STRING,
       hash: DataTypes.STRING,
       salt: DataTypes.STRING,
+      verified: DataTypes.BOOLEAN,
     },
     {
       sequelize,

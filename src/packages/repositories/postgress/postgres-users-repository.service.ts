@@ -3,6 +3,7 @@ import { Column, Model, PrimaryKey, Table } from 'sequelize-typescript';
 import { Op } from 'sequelize';
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
+import { UserNotFound } from '../../shared/ErrorTypes';
 @Table({
   tableName: 'Users',
 })
@@ -18,6 +19,8 @@ export class UserModel extends Model {
   salt: string;
   @Column
   hash: string;
+  @Column
+  verified: boolean;
 }
 
 @Injectable()
@@ -37,13 +40,23 @@ export class PostgresUsersRepository implements UserRepository {
     email: string,
     salt: string,
     hash: string,
-  ): Promise<void> {
-    await UserModel.create({
+  ): Promise<UserModel> {
+    return UserModel.create({
       username,
       email,
       salt,
       hash,
       id: uuidv4(),
+      verified: false,
     });
+  }
+
+  async setUserEmailVerified(id: string) {
+    const user = await UserModel.findOne({ where: { id: { [Op.eq]: id } } });
+    if (!user) {
+      throw new UserNotFound();
+    }
+    user.verified = true;
+    await user.save();
   }
 }

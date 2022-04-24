@@ -1,6 +1,10 @@
 import { UserRepository } from '../repositories/UsersRepository';
 import { IsEmail, IsString } from 'class-validator';
-import { PasswordIncorrect, UserNotFound } from '../../../shared/ErrorTypes';
+import {
+  PasswordIncorrect,
+  UserEmailNotVerified,
+  UserNotFound,
+} from '../../../shared/ErrorTypes';
 import * as crypto from 'crypto';
 import { JWT, JWTResponse } from '../../../shared/jwt';
 
@@ -23,6 +27,10 @@ export class Usecase {
 
     if (!user) {
       throw new UserNotFound();
+    }
+
+    if (!user.verified) {
+      throw new UserEmailNotVerified();
     }
 
     const hash = crypto

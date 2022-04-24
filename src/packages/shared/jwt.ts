@@ -4,6 +4,7 @@ import { InvalidToken } from './ErrorTypes';
 export enum TOKEN_SECRET {
   REFRESH = 'secret_refresh',
   ACCESS = 'secret_access',
+  VERIFY_EMAIL = 'secrey_verify_email',
 }
 
 export interface JWTResponse {
@@ -53,6 +54,10 @@ export class JWT {
       JWT.getAccessTokenTime(),
       TOKEN_SECRET.ACCESS,
     );
+  }
+
+  static getVerifyEmailToken(userId) {
+    return jwt.sign({ data: { userId } }, TOKEN_SECRET.VERIFY_EMAIL);
   }
 
   static verifyToken(token: string, secret: TOKEN_SECRET): string {

@@ -7,6 +7,7 @@ import {
 import { AuthController } from './services/auth.controller';
 import { PanelController } from './services/panel.controller';
 import { LoggerMiddleware } from './packages/shared/authorizer';
+import { MailingService } from './packages/infrastructure/mailing/mailing-service';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { LoggerMiddleware } from './packages/shared/authorizer';
     }),
   ],
   controllers: [AuthController, PanelController],
-  providers: [PostgresUsersRepository],
+  providers: [PostgresUsersRepository, MailingService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

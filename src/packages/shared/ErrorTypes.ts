@@ -18,6 +18,12 @@ export class UserIsAlreadyExists extends HttpException {
   }
 }
 
+export class UserEmailNotVerified extends HttpException {
+  constructor() {
+    super("User's email isn't verified", 403);
+  }
+}
+
 export class InvalidToken extends HttpException {
   constructor() {
     super('Invalid token', 501);
