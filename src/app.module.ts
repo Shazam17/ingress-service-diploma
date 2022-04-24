@@ -8,6 +8,12 @@ import { AuthController } from './services/auth.controller';
 import { PanelController } from './services/panel.controller';
 import { LoggerMiddleware } from './packages/shared/authorizer';
 import { MailingService } from './packages/infrastructure/mailing/mailing-service';
+import {
+  PostgresProjectsRepository,
+  ProjectModel,
+  UserRoleModel,
+} from './packages/repositories/postgress/postgres-projects-repository';
+import { ProjectsController } from './services/projects.controller';
 
 @Module({
   imports: [
@@ -17,14 +23,18 @@ import { MailingService } from './packages/infrastructure/mailing/mailing-servic
       database: 'ingress_service',
       host: '127.0.0.1',
       dialect: 'postgres',
-      models: [UserModel],
+      models: [UserModel, UserRoleModel, ProjectModel],
     }),
   ],
-  controllers: [AuthController, PanelController],
-  providers: [PostgresUsersRepository, MailingService],
+  controllers: [AuthController, PanelController, ProjectsController],
+  providers: [
+    PostgresUsersRepository,
+    PostgresProjectsRepository,
+    MailingService,
+  ],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes(PanelController);
+    consumer.apply(LoggerMiddleware).forRoutes(ProjectsController);
   }
 }

@@ -29,3 +29,9 @@ export class InvalidToken extends HttpException {
     super('Invalid token', 501);
   }
 }
+
+export class ProjectCreationFailed extends HttpException {
+  constructor() {
+    super('Project create failed', 500);
+  }
+}

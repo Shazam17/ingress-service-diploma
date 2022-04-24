@@ -22,7 +22,7 @@ export class MailingService {
       from: 'superpozitiv@gmail.com',
       to: emailAddress,
       subject: 'Email verification',
-      text: `<a href="${content}">verify your email</a>`,
+      html: `<a href="${content}">verify your email</a>`,
     };
     this.transporter.sendMail(message, (err, info) => {
       if (err) {
