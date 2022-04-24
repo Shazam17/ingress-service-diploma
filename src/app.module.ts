@@ -5,7 +5,7 @@ import {
   UserModel,
 } from './packages/repositories/postgress/postgres-users-repository.service';
 import { AuthController } from './services/auth.controller';
-import { PanelController } from './services/panel.controller';
+import { ChatsController } from './services/chats.controller';
 import { LoggerMiddleware } from './packages/shared/authorizer';
 import { MailingService } from './packages/infrastructure/mailing/mailing-service';
 import {
@@ -26,7 +26,7 @@ import { ProjectsController } from './services/projects.controller';
       models: [UserModel, UserRoleModel, ProjectModel],
     }),
   ],
-  controllers: [AuthController, PanelController, ProjectsController],
+  controllers: [AuthController, ChatsController, ProjectsController],
   providers: [
     PostgresUsersRepository,
     PostgresProjectsRepository,
@@ -35,6 +35,7 @@ import { ProjectsController } from './services/projects.controller';
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes(ProjectsController);
+    consumer.apply(LoggerMiddleware).forRoutes(ChatsController);
+    consumer.apply(LoggerMiddleware).forRoutes(ChatsController);
   }
 }
