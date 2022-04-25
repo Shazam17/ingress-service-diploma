@@ -14,6 +14,7 @@ import {
   UserRoleModel,
 } from './packages/repositories/postgress/postgres-projects-repository';
 import { ProjectsController } from './services/projects.controller';
+import { PostgresChatsRepository } from './packages/repositories/postgress/postgres-chats-repository';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { ProjectsController } from './services/projects.controller';
     PostgresUsersRepository,
     PostgresProjectsRepository,
     MailingService,
+    PostgresChatsRepository,
   ],
 })
 export class AppModule {
