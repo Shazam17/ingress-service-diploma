@@ -11,10 +11,13 @@ export class ChatsController {
   }
 
   @Get('/chat-detail/:id')
-  public getChatDetail(@Param('chatId') chatId: string) {}
+  public getChatDetail(@Param('id') id: string) {
+  }
 
-  @Get('/chat-history')
-  public getChatHistory(@Param('chatId') chatId: string) {}
+  @Get('/chat-history/:id')
+  public getChatHistory(@Param('id') id: string) {
+
+  }
 
   @Post('/send-message')
   public sendMessage(@Body() body: object) {}

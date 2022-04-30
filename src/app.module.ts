@@ -14,7 +14,14 @@ import {
   UserRoleModel,
 } from './packages/repositories/postgress/postgres-projects-repository';
 import { ProjectsController } from './services/projects.controller';
-import { PostgresChatsRepository } from './packages/repositories/postgress/postgres-chats-repository';
+import {
+  ChatModel,
+  MessageModel,
+  PostgresChatsRepository,
+  UserChatModel,
+} from './packages/repositories/postgress/postgres-chats-repository';
+import { EventsController } from './services/events.controller';
+import { WebSocketAdapter } from './packages/infrastructure/sockets/webSocketAdapter';
 
 @Module({
   imports: [
@@ -24,15 +31,28 @@ import { PostgresChatsRepository } from './packages/repositories/postgress/postg
       database: 'ingress_service',
       host: '127.0.0.1',
       dialect: 'postgres',
-      models: [UserModel, UserRoleModel, ProjectModel],
+      models: [
+        UserModel,
+        UserRoleModel,
+        ProjectModel,
+        ChatModel,
+        MessageModel,
+        UserChatModel,
+      ],
     }),
   ],
-  controllers: [AuthController, ChatsController, ProjectsController],
+  controllers: [
+    AuthController,
+    ChatsController,
+    ProjectsController,
+    EventsController,
+  ],
   providers: [
     PostgresUsersRepository,
     PostgresProjectsRepository,
     MailingService,
     PostgresChatsRepository,
+    WebSocketAdapter,
   ],
 })
 export class AppModule {
