@@ -14,6 +14,9 @@ module.exports = {
       type: {
         type: Sequelize.STRING,
       },
+      integrationId: {
+        type: Sequelize.STRING,
+      },
       username: {
         type: Sequelize.STRING,
       },

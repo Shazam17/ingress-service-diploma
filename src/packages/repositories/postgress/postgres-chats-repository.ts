@@ -22,6 +22,8 @@ export class ChatModel extends Model {
   @Column
   type: string;
   @Column
+  integrationId: string;
+  @Column
   createdAt: Date;
 }
 
@@ -69,8 +71,13 @@ export class PostgresChatsRepository {
     return ChatModel.findOne({ where: { id } });
   }
 
-  async createUserChat(id: string, type: string) {
-    return ChatModel.create({ id, type, chatName: `Chat with id: ${id}` });
+  async createUserChat(id: string, type: string, integrationId: string) {
+    return ChatModel.create({
+      id,
+      type,
+      chatName: `Chat with id: ${id}`,
+      integrationId,
+    });
   }
 
   async addUserToChat(userId: string, chatId: string) {

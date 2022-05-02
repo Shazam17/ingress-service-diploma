@@ -8,10 +8,12 @@ import {
   GetUserChatsInput,
   GetUserChatsUsecase,
 } from '../packages/domain/chats/usecases/get-user-chats';
+import { SendMessageInput, SendMessageUsecase } from "../packages/domain/chats/usecases/send-message";
+import { IntegrationsRepository } from "../packages/repositories/postgress/integrations-repository";
 
 @Controller()
 export class ChatsController {
-  constructor(private chats: PostgresChatsRepository) {}
+  constructor(private chats: PostgresChatsRepository, private integrations: IntegrationsRepository) {}
 
   @Get('/user-chats/:id')
   public getUserChats(@Param('id') userId: string,  @Query() query: Partial<GetUserChatsInput>) {
@@ -31,5 +33,8 @@ export class ChatsController {
   }
 
   @Post('/send-message')
-  public sendMessage(@Body() body: object) {}
+  public sendMessage(@Body() input: SendMessageInput) {
+    const usecase = new SendMessageUsecase(this.integrations, this.chats);
+    return usecase.execute(input);
+  }
 }

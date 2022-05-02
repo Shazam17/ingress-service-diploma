@@ -7,6 +7,7 @@ import {
 } from '../../../repositories/postgress/postgres-chats-repository';
 import { WebSocketAdapter } from '../../../infrastructure/sockets/webSocketAdapter';
 import { RequestSuccess } from '../../../shared/ResponseTypes';
+import { IntegrationsRepository } from '../../../repositories/postgress/integrations-repository';
 
 export class InputChat {
   id: string;
@@ -35,12 +36,15 @@ export class ParseNewMessageInput {
   type: string;
   @IsString()
   external_user_id: string;
+  @IsString()
+  instanceId: string;
 }
 
 export class Usecase {
   constructor(
     private chats: PostgresChatsRepository,
     private sockets: WebSocketAdapter,
+    private integrations: IntegrationsRepository,
   ) {}
 
   async execute(input: ParseNewMessageInput) {
@@ -48,8 +52,13 @@ export class Usecase {
       console.log('new message');
       console.log(input);
       const chat = await this.chats.getChatById(input.chat.id);
-      if (!chat) {
-        await this.chats.createUserChat(input.chat.id, input.type);
+      const integration = await this.integrations.getIntegration(
+        input.external_user_id,
+        input.instanceId,
+      );
+
+      if (!chat && integration) {
+        await this.chats.createUserChat(input.chat.id, input.type, integration.id);
       }
 
       const userChat = await this.chats.addUserToChat(

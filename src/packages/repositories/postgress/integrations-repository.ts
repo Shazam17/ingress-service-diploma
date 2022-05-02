@@ -51,6 +51,14 @@ export class Integration extends Model {
       instanceId,
     });
   }
+
+  async sendMessage(url, instanceId: string, message: string, chatId: string) {
+    return axios.post(url + '/send-message', {
+      instanceId,
+      message,
+      chatId,
+    });
+  }
 }
 
 @Table({
@@ -73,6 +81,10 @@ export class IntegrationsRepository {
 
   constructor() {
     this.integrationTypes = IntegrationType.findAll();
+  }
+
+  getIntegration(userId: string, instanceId: string) {
+    return Integration.findOne({ where: { userId, instanceId } });
   }
 
   async createIntegration(
@@ -105,7 +117,7 @@ export class IntegrationsRepository {
     );
     integration.state = stateResponse.data.state.replace('TELEGRAM_', '');
     await integration.save();
-    return { instanceId: integration.instanceId };
+    return { instanceId: integration.id };
   }
 
   async pushAuthState(integrationId: string, value: string) {
@@ -182,5 +194,20 @@ export class IntegrationsRepository {
     });
     integration.state = 'WORKING';
     await integration.save();
+  }
+
+  async sendMessage(integrationId: string, message: string, chatId: string) {
+    const integration = await Integration.findOne({
+      where: { id: integrationId },
+    });
+    const integrationType = await IntegrationType.findOne({
+      where: { name: integration.type },
+    });
+    await integration.sendMessage(
+      integrationType.url,
+      integration.instanceId,
+      message,
+      chatId,
+    );
   }
 }
