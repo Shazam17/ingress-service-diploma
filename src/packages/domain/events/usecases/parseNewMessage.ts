@@ -52,6 +52,11 @@ export class Usecase {
         await this.chats.createUserChat(input.chat.id, input.type);
       }
 
+      const userChat = await this.chats.addUserToChat(
+        input.external_user_id,
+        input.chat.id,
+      );
+
       const message = await this.chats.createMessage(
         input.message.id,
         input.message.fromUser,

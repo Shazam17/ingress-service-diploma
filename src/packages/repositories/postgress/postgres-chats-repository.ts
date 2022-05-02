@@ -2,6 +2,12 @@ import { Column, IsUUID, Model, PrimaryKey, Table } from 'sequelize-typescript';
 import { Injectable } from '@nestjs/common';
 import { Op } from 'sequelize';
 import { UserModel } from './postgres-users-repository.service';
+import { v4 as uuidv4 } from 'uuid';
+
+export const CHAT_FILTER = {
+  ALL: 'ALL',
+  TELEGRAM: 'TELEGRAM',
+};
 
 @Table({
   tableName: 'Chats',
@@ -20,7 +26,7 @@ export class ChatModel extends Model {
 }
 
 @Table({
-  tableName: 'Chats',
+  tableName: 'UserChats',
 })
 export class UserChatModel extends Model {
   @PrimaryKey
@@ -67,6 +73,35 @@ export class PostgresChatsRepository {
     return ChatModel.create({ id, type, chatName: `Chat with id: ${id}` });
   }
 
+  async addUserToChat(userId: string, chatId: string) {
+    const found = await UserChatModel.findOne({ where: { userId, chatId } });
+    if (found) {
+      return found;
+    }
+    return UserChatModel.create({ id: uuidv4(), userId, chatId });
+  }
+
+  async getUserChatsById(
+    userId: string,
+    offset = 0,
+    limit = 10,
+    channelFilter = CHAT_FILTER.ALL,
+  ) {
+    const foundUserChats = await UserChatModel.findAll({ where: { userId } });
+    const filter =
+      channelFilter === CHAT_FILTER.ALL ? {} : { type: channelFilter };
+    const chats = await Promise.all(
+      foundUserChats.map(async (item) => {
+        return ChatModel.findOne({
+          where: { id: item.chatId, ...filter },
+          offset,
+          limit,
+        });
+      }),
+    );
+    return chats;
+  }
+
   async isUserInChat(userId: string, chatId: string) {
     const userChat = await UserChatModel.findOne({ where: { userId, chatId } });
     return !!userChat;
@@ -87,6 +122,15 @@ export class PostgresChatsRepository {
       fromUser,
       attachmentUrl,
       chatId,
+    });
+  }
+
+  async getMessagesByChat(chatId: string, limit = 10, offset = 0) {
+    return MessageModel.findAll({
+      where: { chatId },
+      limit,
+      offset,
+      order: [['createdAt', 'DESC']],
     });
   }
 
@@ -112,8 +156,15 @@ export class PostgresChatsRepository {
     toUser: string,
     chatId: string,
     attachmentUrl: string,
-    text: string
+    text: string,
   ) {
-    return MessageModel.create({ id, fromUser, toUser, chatId, attachmentUrl,text });
+    return MessageModel.create({
+      id,
+      fromUser,
+      toUser,
+      chatId,
+      attachmentUrl,
+      text,
+    });
   }
 }

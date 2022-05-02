@@ -35,3 +35,9 @@ export class ProjectCreationFailed extends HttpException {
     super('Project create failed', 500);
   }
 }
+
+export class ChatNotFound extends HttpException {
+  constructor() {
+    super('Chat not found', 404);
+  }
+}

@@ -22,6 +22,12 @@ import {
 } from './packages/repositories/postgress/postgres-chats-repository';
 import { EventsController } from './services/events.controller';
 import { WebSocketAdapter } from './packages/infrastructure/sockets/webSocketAdapter';
+import { SettingsController } from "./services/settings.controller";
+import {
+  Integration,
+  IntegrationsRepository,
+  IntegrationType
+} from "./packages/repositories/postgress/integrations-repository";
 
 @Module({
   imports: [
@@ -38,6 +44,8 @@ import { WebSocketAdapter } from './packages/infrastructure/sockets/webSocketAda
         ChatModel,
         MessageModel,
         UserChatModel,
+        Integration,
+        IntegrationType
       ],
     }),
   ],
@@ -46,6 +54,7 @@ import { WebSocketAdapter } from './packages/infrastructure/sockets/webSocketAda
     ChatsController,
     ProjectsController,
     EventsController,
+    SettingsController
   ],
   providers: [
     PostgresUsersRepository,
@@ -53,11 +62,12 @@ import { WebSocketAdapter } from './packages/infrastructure/sockets/webSocketAda
     MailingService,
     PostgresChatsRepository,
     WebSocketAdapter,
+    IntegrationsRepository
   ],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes(ChatsController);
-    consumer.apply(LoggerMiddleware).forRoutes(ChatsController);
+    // consumer.apply(LoggerMiddleware).forRoutes(ChatsController);
+    consumer.apply(LoggerMiddleware).forRoutes(ProjectsController);
   }
 }
