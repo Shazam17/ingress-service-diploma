@@ -18,9 +18,7 @@ export class WebSocketAdapter {
   server: any;
 
   sendToClient(message: object) {
-    this.server.emit('messages', {
-      message,
-    });
+    this.server.emit('messages', message);
   }
 
   @SubscribeMessage('messages')

@@ -14,7 +14,7 @@ export const CHAT_FILTER = {
 })
 export class ChatModel extends Model {
   @PrimaryKey
-  @IsUUID(4)
+  @IsUUID(5)
   @Column
   id: string;
   @Column
@@ -38,7 +38,7 @@ export class UserChatModel extends Model {
   @IsUUID(4)
   @Column
   userId: string;
-  @IsUUID(4)
+  @IsUUID(5)
   @Column
   chatId: string;
 }
@@ -140,8 +140,6 @@ export class PostgresChatsRepository {
       order: [['createdAt', 'DESC']],
     });
   }
-
-  async insertNewChat() {}
 
   async getUserChats(userId: string) {
     const userRoles = await UserChatModel.findAll({

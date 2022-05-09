@@ -13,7 +13,11 @@ export class LoggerMiddleware implements NestMiddleware {
     if (!user) {
       throw new UserNotFound();
     }
-    req.body.user = user;
+    if (req.method === 'GET') {
+      req.body = user;
+    } else {
+      req.body.user = user;
+    }
     next();
   }
 }

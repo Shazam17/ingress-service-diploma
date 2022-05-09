@@ -16,6 +16,11 @@ import {
   CommitIntegrationCreateUsecase,
   CommitIntegrationInput,
 } from '../packages/domain/settings/usecases/commit-create';
+import {
+  GetUserIntegrationsInput,
+  GetUserIntegrationsUsecase,
+} from '../packages/domain/settings/usecases/get-user-integrations';
+import { UserModel } from '../packages/repositories/postgress/postgres-users-repository.service';
 
 @Controller()
 export class SettingsController {
@@ -46,8 +51,9 @@ export class SettingsController {
   }
 
   @Get('/user-integrations')
-  getUserIntegrationsList(@Query() input: object) {
-    return [];
+  getUserIntegrationsList(@Body() user: UserModel) {
+    const usecase = new GetUserIntegrationsUsecase(this.integrations);
+    return usecase.execute({ userId: user.id });
   }
 
   @Post('/rename-integration')

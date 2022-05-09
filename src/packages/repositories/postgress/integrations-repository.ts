@@ -87,6 +87,10 @@ export class IntegrationsRepository {
     return Integration.findOne({ where: { userId, instanceId } });
   }
 
+  getUsersIntegrations(userId: string) {
+    return Integration.findAll({ where: { userId } });
+  }
+
   async createIntegration(
     userId: string,
     type: string,
@@ -140,13 +144,14 @@ export class IntegrationsRepository {
     );
     integration.state = stateResponse.data.state.replace('TELEGRAM_', '');
     await integration.save();
+    return { success: true };
   }
 
   transformStateToCommands(state: string) {
     switch (state) {
       case TELEGRAM_STATE.NOT_INITIALIZED:
         return {
-          fieldName: 'phone number',
+          fieldName: 'phonenumber',
           canCommit: false,
         };
         break;
@@ -209,5 +214,6 @@ export class IntegrationsRepository {
       message,
       chatId,
     );
+    return {};
   }
 }

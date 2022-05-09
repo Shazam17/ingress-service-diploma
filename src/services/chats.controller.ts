@@ -8,17 +8,29 @@ import {
   GetUserChatsInput,
   GetUserChatsUsecase,
 } from '../packages/domain/chats/usecases/get-user-chats';
-import { SendMessageInput, SendMessageUsecase } from "../packages/domain/chats/usecases/send-message";
-import { IntegrationsRepository } from "../packages/repositories/postgress/integrations-repository";
+import {
+  SendMessageInput,
+  SendMessageUsecase,
+} from '../packages/domain/chats/usecases/send-message';
+import { IntegrationsRepository } from '../packages/repositories/postgress/integrations-repository';
+import { UserModel } from '../packages/repositories/postgress/postgres-users-repository.service';
+import { WebSocketAdapter } from '../packages/infrastructure/sockets/webSocketAdapter';
 
 @Controller()
 export class ChatsController {
-  constructor(private chats: PostgresChatsRepository, private integrations: IntegrationsRepository) {}
+  constructor(
+    private chats: PostgresChatsRepository,
+    private integrations: IntegrationsRepository,
+    private webSocketAdapter: WebSocketAdapter,
+  ) {}
 
-  @Get('/user-chats/:id')
-  public getUserChats(@Param('id') userId: string,  @Query() query: Partial<GetUserChatsInput>) {
+  @Get('/user-chats')
+  public getUserChats(
+    @Body() user: UserModel,
+    @Query() query: Partial<GetUserChatsInput>,
+  ) {
     const usecase = new GetUserChatsUsecase(this.chats);
-    query.userId = userId;
+    query.userId = user.id;
     return usecase.execute(query as GetUserChatsInput);
   }
 
@@ -34,7 +46,11 @@ export class ChatsController {
 
   @Post('/send-message')
   public sendMessage(@Body() input: SendMessageInput) {
-    const usecase = new SendMessageUsecase(this.integrations, this.chats);
+    const usecase = new SendMessageUsecase(
+      this.integrations,
+      this.chats,
+      this.webSocketAdapter,
+    );
     return usecase.execute(input);
   }
 }

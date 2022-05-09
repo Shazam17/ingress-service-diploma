@@ -1,7 +1,8 @@
 import { IntegrationsRepository } from '../../../repositories/postgress/integrations-repository';
+import { UserModel } from '../../../repositories/postgress/postgres-users-repository.service';
 
 export class CreateIntegrationInput {
-  userId: string;
+  user: UserModel;
   type: string;
 }
 
@@ -13,6 +14,6 @@ export class CreateIntegrationUsecase {
   }
 
   async execute(input: CreateIntegrationInput) {
-    return this.integrations.createIntegration(input.userId, input.type)
-  };
+    return this.integrations.createIntegration(input.user.id, input.type);
+  }
 }
